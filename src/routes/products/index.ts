@@ -1,21 +1,16 @@
 import express,{Router} from "express";
-import { listproducts } from "controllers/productcontroller";
+import { listproducts,getproductsbyid,createproduct,updateProduct,deleteProduct } from "./productcontroller";
 
 const router = Router(); //router is nothing but a way to group together mutliple end points
 
 router.get('/',listproducts);
 
-router.get('/',(req,res) => {
-   res.send('This is the products page')
-})
+router.get('/:id',getproductsbyid);
 
-router.post('/',(req,res)=> {
-    res.send('New product created')
-})
+router.post('/',createproduct);
 
-router.get('/:id',(req,res) => {
-    console.log(req.params); // the params is an object
-    res.send('The list of products');
-})
+router.put('/:id',updateProduct);
+
+router.delete('/:id',deleteProduct);
 
 export default router;
