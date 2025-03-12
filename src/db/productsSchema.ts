@@ -1,6 +1,7 @@
 //defining a schema is an abstarct way of creating a table
 
 import { integer, pgTable, varchar ,text,doublePrecision} from "drizzle-orm/pg-core";
+import { createSelectSchema , createInsertSchema} from 'drizzle-zod';
 
 export const productsTable = pgTable("products", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -9,3 +10,12 @@ export const productsTable = pgTable("products", {
   image: varchar({length:255}),
   price: doublePrecision().notNull(),
 });
+
+export const createProductSchema = createInsertSchema(productsTable).pick({
+    name: true,
+    description: true,
+    image: true,
+    price: true
+    // id intentionally left out
+ });
+

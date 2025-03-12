@@ -2,6 +2,8 @@ import express, { Request, Response }from "express";
 import {db} from '../../db/db';
 import { productsTable } from "../../db/productsSchema"; //following relative path
 import { eq } from "drizzle-orm";
+import _ from 'lodash';
+import {createProductSchema} from '../../db/productsSchema'
 
 export async function listproducts(req: Request, res: Response) {
     try{
@@ -46,9 +48,21 @@ export async function getproductsbyid(req: Request, res: Response) {
     }
 }
 
+/*
+ Ensuring Required Fields Are Present
+_.pick(req.body, ["name", "price"]) only picks the specified fields but does not check if they exist.
+If req.body is missing name or price, _.pick() will return an object with missing fields, causing an insertion error in the database.
+createProductSchema.parse(req.body) ensures all required fields exist and throws an error if any are missing.
+
+Validating Data Types Before Database Insertion -> if we want a number and we pass a string it won't work
+
+*/
+
 export async function createproduct(req: Request, res:Response) {
     try{
-    const [products] = await db.insert(productsTable).values(req.body).returning();//returning will return it
+    console.log(Object.keys(createProductSchema.shape))//shows all the keys
+    const parsedData = createProductSchema.parse(req.body);  //ensures only required data is inserted into the database
+    const [products] = await db.insert(productsTable).values(parsedData).returning();//returning will return it
     res.status(201).json(products);
     }catch (e){
         res.status(500).send(e);
