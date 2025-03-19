@@ -19,3 +19,5 @@ export const createProductSchema = createInsertSchema(productsTable).pick({
     // id intentionally left out
  });
 
+
+
